@@ -1,7 +1,6 @@
 from wq.db.patterns.base.serializers import AttachedModelSerializer
 from rest_framework import serializers
 from rest_framework.utils import model_meta
-from wq.db.rest import compat as html
 from .models import NaturalKeyModel
 
 
@@ -85,12 +84,6 @@ class NaturalKeySerializer(serializers.ModelSerializer):
     @classmethod
     def for_depth(cls, model_class):
         return cls
-
-    def to_internal_value(self, data):
-        if html.is_html_input(data):
-            data = html.parse_json_form(data)
-        result = super(NaturalKeySerializer, self).to_internal_value(data)
-        return result
 
     class Meta:
         depth = 1
