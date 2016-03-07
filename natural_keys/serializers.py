@@ -1,3 +1,4 @@
+from wq.db.rest.serializers import BaseModelSerializer
 from wq.db.patterns.base.serializers import AttachedModelSerializer
 from rest_framework import serializers
 from rest_framework.utils import model_meta
@@ -34,7 +35,7 @@ class NaturalKeyValidator(serializers.UniqueTogetherValidator):
         )
 
 
-class NaturalKeySerializer(serializers.ModelSerializer):
+class NaturalKeySerializer(BaseModelSerializer):
     """
     Self-nesting Serializer for NaturalKeyModels
     """
