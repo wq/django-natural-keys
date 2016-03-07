@@ -4,7 +4,7 @@ python:
  - "3.4"
 env:
   global:
-   - DRF="djangorestframework==3.3.2"
+   - DRF="https://github.com/tomchristie/django-rest-framework/archive/master.zip"
    - DJANGO="django==1.9.3"
    - WQDB=https://github.com/wq/wq.db/archive/master.zip"
   matrix:
