@@ -4,16 +4,14 @@ python:
  - "3.4"
 env:
   global:
-   - DRF="https://github.com/tomchristie/django-rest-framework/archive/master.zip"
+   - DRF="djangorestframework==3.3.2"
    - DJANGO="django==1.9.3"
-   - WQDB=https://github.com/wq/wq.db/archive/master.zip"
   matrix:
    - LINT=
    - LINT=1
 install:
  - pip install $DJANGO
  - pip install $DRF
- - pip install $WQDB
  - pip install flake8
 script:
  - ./runtests.sh

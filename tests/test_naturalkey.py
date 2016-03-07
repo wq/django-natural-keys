@@ -4,7 +4,6 @@ from tests.test_app.models import (
     NaturalKeyParent, NaturalKeyChild, ModelWithNaturalKey
 )
 from natural_keys import NaturalKeySerializer
-from django.contrib.auth.models import User
 from django.db.utils import IntegrityError
 
 # Tests for natural key models
@@ -74,10 +73,6 @@ class NaturalKeyTestCase(APITestCase):
 
 
 class NaturalKeyRestTestCase(APITestCase):
-    def setUp(self):
-        self.user = User.objects.create(username='testuser', is_superuser=True)
-        self.client.force_authenticate(user=self.user)
-
     def test_naturalkey_rest_serializer(self):
         # Serializer should include validator
         serializer = NaturalKeySerializer.for_model(NaturalKeyChild)

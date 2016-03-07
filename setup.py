@@ -42,6 +42,9 @@ setup(
     packages=['natural_keys'],
     description=LONG_DESCRIPTION.strip(),
     long_description=parse_markdown_readme(),
+    install_requires=[
+        'html-json-forms>=0.1.1',
+    ],
     classifiers=[
         'Framework :: Django',
         'Development Status :: 4 - Beta',

@@ -1,7 +1,6 @@
-from wq.db.rest.serializers import BaseModelSerializer
-from wq.db.patterns.base.serializers import AttachedModelSerializer
 from rest_framework import serializers
 from rest_framework.utils import model_meta
+from html_json_forms.serializers import JSONFormModelSerializer
 from .models import NaturalKeyModel
 
 
@@ -35,7 +34,7 @@ class NaturalKeyValidator(serializers.UniqueTogetherValidator):
         )
 
 
-class NaturalKeySerializer(BaseModelSerializer):
+class NaturalKeySerializer(JSONFormModelSerializer):
     """
     Self-nesting Serializer for NaturalKeyModels
     """
@@ -90,7 +89,7 @@ class NaturalKeySerializer(BaseModelSerializer):
         depth = 1
 
 
-class NaturalKeyModelSerializer(AttachedModelSerializer):
+class NaturalKeyModelSerializer(JSONFormModelSerializer):
     """
     Serializer for models with one or more foreign keys to a NaturalKeyModel
     """
@@ -123,11 +122,8 @@ class NaturalKeyModelSerializer(AttachedModelSerializer):
     def get_fields(self):
         fields = super(NaturalKeyModelSerializer, self).get_fields()
         info = model_meta.get_field_info(self.Meta.model)
-        for key in fields:
-            if not key.endswith('_id'):
-                continue
-            field = key[:-3]
-            if field in fields or field not in info.relations:
+        for field in fields:
+            if field not in info.relations:
                 continue
             relation_info = info.relations[field]
             if not issubclass(relation_info.related_model, NaturalKeyModel):
@@ -163,3 +159,14 @@ class NaturalKeyModelSerializer(AttachedModelSerializer):
                 validated_data[name] = fields[name].create(
                     validated_data[name]
                 )
+
+    @classmethod
+    def for_model(cls, model_class):
+        # c.f. wq.db.rest.serializers.ModelSerializer
+        class Serializer(cls):
+            class Meta(cls.Meta):
+                model = model_class
+        return Serializer
+
+    class Meta:
+        pass
