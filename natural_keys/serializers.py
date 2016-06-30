@@ -121,11 +121,13 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
 
     def get_fields(self):
         fields = super(NaturalKeyModelSerializer, self).get_fields()
+        fields.update(self.build_natural_key_fields())
+        return fields
+
+    def build_natural_key_fields(self):
         info = model_meta.get_field_info(self.Meta.model)
-        for field in fields:
-            if field not in info.relations:
-                continue
-            relation_info = info.relations[field]
+        fields = {}
+        for field, relation_info in info.relations.items():
             if not issubclass(relation_info.related_model, NaturalKeyModel):
                 continue
             field_class, field_kwargs = self.build_nested_field(
