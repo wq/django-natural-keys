@@ -75,17 +75,22 @@ class NaturalKeyTestCase(APITestCase):
 class NaturalKeyRestTestCase(APITestCase):
     def test_naturalkey_rest_serializer(self):
         # Serializer should include validator
-        serializer = NaturalKeySerializer.for_model(NaturalKeyChild)
+        serializer = NaturalKeySerializer.for_model(NaturalKeyChild)()
         self.maxDiff = 10000000
         expect = """
              Serializer():
-                 parent = Serializer(required=True):
-                     code = CharField(max_length=10, required=True)
-                     group = CharField(max_length=10, required=True)
-                 mode = CharField(max_length=10, required=True)
+                 parent = Serializer():
+                     code = CharField(max_length=10)
+                     group = CharField(max_length=10)
+                 mode = CharField(max_length=10)
                  class Meta:
                      validators = [<NaturalKeyValidator(queryset=NaturalKeyChild.objects.all(), fields=('parent', 'mode'))>]""".replace("             ", "")[1:]  # noqa
-        self.assertEqual(str(serializer()), expect)
+        self.assertEqual(expect, str(serializer))
+
+        fields = serializer.get_fields()
+        self.assertTrue(fields['parent'].required)
+        self.assertTrue(fields['mode'].required)
+        self.assertTrue(fields['parent'].get_fields()['code'].required)
 
     def test_naturalkey_rest_post(self):
         # Posting a natural key should work

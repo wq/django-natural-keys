@@ -125,7 +125,7 @@ class NaturalKeyModel(models.Model):
         fields = cls.get_natural_key_def()
         info = []
         for name in fields:
-            field = cls._meta.get_field_by_name(name)[0]
+            field = cls._meta.get_field(name)
             rel_to = field.rel.to if field.rel else None
             info.append((name, rel_to))
         return info
