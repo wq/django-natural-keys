@@ -1,6 +1,5 @@
 import os
-import sys
-from setuptools import setup, find_packages
+from setuptools import setup
 
 LONG_DESCRIPTION = """
 Enhanced support for natural keys in Django and Django REST Framework
@@ -34,7 +33,7 @@ def parse_markdown_readme():
 
 setup(
     name='natural-keys',
-    version='0.1.1-dev',
+    version='1.0.0',
     author='S. Andrew Sheppard',
     author_email='andrew@wq.io',
     url='https://github.com/wq/django-natural-keys',
@@ -43,11 +42,11 @@ setup(
     description=LONG_DESCRIPTION.strip(),
     long_description=parse_markdown_readme(),
     install_requires=[
-        'html-json-forms>=0.1.1',
+        'html-json-forms>=1.0.0',
     ],
     classifiers=[
         'Framework :: Django',
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
@@ -55,6 +54,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Database',
     ],
     test_suite='tests',
