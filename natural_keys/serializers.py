@@ -63,8 +63,13 @@ class NaturalKeySerializer(JSONFormModelSerializer):
         )
 
     @classmethod
-    def for_model(cls, model_class, validate_key=True):
+    def for_model(cls, model_class, validate_key=True, include_fields=None):
         unique_together = model_class._meta.unique_together[0]
+        if include_fields and list(include_fields) != list(unique_together):
+            raise NotImplementedError(
+                "NaturalKeySerializer requires all natural key fields: %s"
+                % ', '.join(unique_together)
+            )
 
         class Serializer(cls):
             class Meta(cls.Meta):
@@ -163,11 +168,13 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
                 )
 
     @classmethod
-    def for_model(cls, model_class):
+    def for_model(cls, model_class, include_fields=None):
         # c.f. wq.db.rest.serializers.ModelSerializer
         class Serializer(cls):
             class Meta(cls.Meta):
                 model = model_class
+                if include_fields:
+                    fields = include_fields
         return Serializer
 
     class Meta:

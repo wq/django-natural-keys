@@ -13,5 +13,6 @@ class NaturalKeyChildViewSet(viewsets.ModelViewSet):
 class ModelWithNaturalKeyViewSet(viewsets.ModelViewSet):
     queryset = ModelWithNaturalKey.objects.all()
     serializer_class = NaturalKeyModelSerializer.for_model(
-        ModelWithNaturalKey
+        ModelWithNaturalKey,
+        include_fields="__all__",
     )
