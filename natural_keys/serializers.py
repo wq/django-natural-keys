@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.utils import model_meta
 from html_json_forms.serializers import JSONFormModelSerializer
 from .models import NaturalKeyModel
+from collections import OrderedDict
 
 
 class NaturalKeyValidator(serializers.UniqueTogetherValidator):
@@ -131,7 +132,7 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
 
     def build_natural_key_fields(self):
         info = model_meta.get_field_info(self.Meta.model)
-        fields = {}
+        fields = OrderedDict()
         for field, relation_info in info.relations.items():
             if not issubclass(relation_info.related_model, NaturalKeyModel):
                 continue
