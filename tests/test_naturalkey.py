@@ -1,7 +1,8 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 from tests.test_app.models import (
-    NaturalKeyParent, NaturalKeyChild, ModelWithNaturalKey
+    NaturalKeyParent, NaturalKeyChild, ModelWithNaturalKey,
+    ModelWithSingleUniqueField
 )
 from natural_keys import NaturalKeySerializer
 from django.db.utils import IntegrityError
@@ -24,6 +25,10 @@ class NaturalKeyTestCase(APITestCase):
             NaturalKeyChild.get_natural_key_fields(),
             ['parent__code', 'parent__group', 'mode']
         )
+        self.assertEqual(
+            ModelWithSingleUniqueField.get_natural_key_fields(),
+            ['code']
+        )
 
     def test_naturalkey_create(self):
         # Manager create
@@ -43,6 +48,11 @@ class NaturalKeyTestCase(APITestCase):
         # Shortcut version
         p3 = NaturalKeyParent.objects.find("code1", "group1")
         self.assertEqual(p1.pk, p3.pk)
+
+        p4 = ModelWithSingleUniqueField.objects.create_by_natural_key(
+            "code4"
+        )
+        self.assertEqual(p4.code, "code4")
 
     def test_naturalkey_nested_create(self):
         # Manager create, with nested natural key
@@ -93,7 +103,7 @@ class NaturalKeyRestTestCase(APITestCase):
         self.assertTrue(fields['parent'].get_fields()['code'].required)
 
     def test_naturalkey_rest_post(self):
-        # Posting a natural key should work
+        # Posting a compound natural key should work
         form = {
             'mode': 'mode3a',
             'parent[code]': "code3",
@@ -106,6 +116,16 @@ class NaturalKeyRestTestCase(APITestCase):
         self.assertEqual(response.data['mode'], "mode3a")
         self.assertEqual(response.data['parent']['code'], "code3")
         self.assertEqual(response.data['parent']['group'], "group3")
+
+        # Posting a simple natural key should work
+        form = {
+            'code': 'code9',
+        }
+        response = self.client.post('/modelwithsingleuniquefield.json', form)
+        self.assertEqual(
+            response.status_code, status.HTTP_201_CREATED, response.data
+        )
+        self.assertEqual(response.data['code'], "code9")
 
         # Posting same nested natural key should reuse nested object
         form = {
@@ -123,7 +143,7 @@ class NaturalKeyRestTestCase(APITestCase):
         )
 
     def test_naturalkey_rest_duplicate(self):
-        # Posting identical natural key should fail
+        # Posting identical compound natural key should fail
         form = {
             'mode': 'mode3c',
             'parent[code]': "code3",
@@ -139,6 +159,7 @@ class NaturalKeyRestTestCase(APITestCase):
             'parent[group]': "group3",
         }
         response = self.client.post('/naturalkeychilds.json', form)
+        print(response.data)
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data
         )
@@ -146,6 +167,31 @@ class NaturalKeyRestTestCase(APITestCase):
             response.data, {
                 'non_field_errors': [
                     'The fields parent, mode must make a unique set.'
+                ]
+            }
+        )
+
+        # Posting identical simple natural key should fail
+        form = {
+            'code': 'code8',
+        }
+        response = self.client.post('/modelwithsingleuniquefield.json', form)
+        print(response)
+        self.assertEqual(
+            response.status_code, status.HTTP_201_CREATED, response.data
+        )
+        form = {
+            'code': 'code8',
+        }
+        response = self.client.post('/modelwithsingleuniquefield.json', form)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
+        self.assertEqual(
+            response.data, {
+                'code': [
+                    'model with single unique field '
+                    'with this code already exists.'
                 ]
             }
         )
