@@ -21,3 +21,7 @@ class NaturalKeyChild(NaturalKeyModel):
 class ModelWithNaturalKey(models.Model):
     key = models.ForeignKey(NaturalKeyChild)
     value = models.CharField(max_length=10)
+
+
+class ModelWithSingleUniqueField(NaturalKeyModel):
+    code = models.CharField(max_length=10, unique=True)

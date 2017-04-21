@@ -132,7 +132,12 @@ class NaturalKeyModel(models.Model):
 
     @classmethod
     def get_natural_key_def(cls):
-        return cls._meta.unique_together[0]
+        try:
+            return cls._meta.unique_together[0]
+        except IndexError:
+            unique = [f for f in cls._meta.fields
+                      if f.unique and not f.__class__.__name__ == 'AutoField']
+            return (unique[0].name, )
 
     @classmethod
     def get_natural_key_fields(cls):
