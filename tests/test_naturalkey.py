@@ -159,7 +159,6 @@ class NaturalKeyRestTestCase(APITestCase):
             'parent[group]': "group3",
         }
         response = self.client.post('/naturalkeychilds.json', form)
-        print(response.data)
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data
         )
@@ -176,7 +175,6 @@ class NaturalKeyRestTestCase(APITestCase):
             'code': 'code8',
         }
         response = self.client.post('/modelwithsingleuniquefield.json', form)
-        print(response)
         self.assertEqual(
             response.status_code, status.HTTP_201_CREATED, response.data
         )
