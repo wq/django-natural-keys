@@ -77,9 +77,7 @@ One key feature of *Django Natural Keys* is that it will automatically traverse 
 
 ```python
 class Place(NaturalKeyModel):
-    name = models.CharField(max_length=255)
-    class Meta:
-        unique_together = (('name',),)
+    name = models.CharField(max_length=255, unique=True)
 
 class Event(NaturalKeyModel):
     place = models.ForeignKey(Place)
