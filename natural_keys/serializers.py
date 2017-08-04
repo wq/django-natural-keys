@@ -68,8 +68,10 @@ class NaturalKeySerializer(JSONFormModelSerializer):
         unique_together = model_class._meta.unique_together[0]
         if include_fields and list(include_fields) != list(unique_together):
             raise NotImplementedError(
-                "NaturalKeySerializer requires all natural key fields: %s"
-                % ', '.join(unique_together)
+                "NaturalKeySerializer for '%s' has unique_together = [%s], "
+                "but provided include_fields = [%s]"
+                % (model_class._meta.model_name, ', '.join(unique_together),
+                   ', '.join(include_fields))
             )
 
         class Serializer(cls):
