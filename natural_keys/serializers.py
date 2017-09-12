@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework.utils import model_meta
+from rest_framework.validators import UniqueValidator
 from html_json_forms.serializers import JSONFormModelSerializer
 from .models import NaturalKeyModel
 from collections import OrderedDict
@@ -39,6 +40,19 @@ class NaturalKeySerializer(JSONFormModelSerializer):
     """
     Self-nesting Serializer for NaturalKeyModels
     """
+    def build_standard_field(self, field_name, model_field):
+        field_class, field_kwargs = super(
+            NaturalKeySerializer, self
+        ).build_standard_field(field_name, model_field)
+
+        if 'validators' in field_kwargs:
+            field_kwargs['validators'] = [
+                validator
+                for validator in field_kwargs.get('validators', [])
+                if not isinstance(validator, UniqueValidator)
+            ]
+        return field_class, field_kwargs
+
     def build_nested_field(self, field_name, relation_info, nested_depth):
         field_class = NaturalKeySerializer.for_model(
             relation_info.related_model,
@@ -65,7 +79,7 @@ class NaturalKeySerializer(JSONFormModelSerializer):
 
     @classmethod
     def for_model(cls, model_class, validate_key=True, include_fields=None):
-        unique_together = model_class._meta.unique_together[0]
+        unique_together = model_class.get_natural_key_def()
         if include_fields and list(include_fields) != list(unique_together):
             raise NotImplementedError(
                 "NaturalKeySerializer for '%s' has unique_together = [%s], "

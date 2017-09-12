@@ -86,7 +86,6 @@ class NaturalKeyRestTestCase(APITestCase):
     def test_naturalkey_rest_serializer(self):
         # Serializer should include validator
         serializer = NaturalKeySerializer.for_model(NaturalKeyChild)()
-        self.maxDiff = 10000000
         expect = """
              Serializer():
                  parent = Serializer():
@@ -101,6 +100,21 @@ class NaturalKeyRestTestCase(APITestCase):
         self.assertTrue(fields['parent'].required)
         self.assertTrue(fields['mode'].required)
         self.assertTrue(fields['parent'].get_fields()['code'].required)
+
+    def test_naturalkey_rest_singleunique(self):
+        # Serializer should only have single top-level validator
+        serializer = NaturalKeySerializer.for_model(
+            ModelWithSingleUniqueField
+        )()
+        expect = """
+             Serializer():
+                 code = CharField(max_length=10, validators=[])
+                 class Meta:
+                     validators = [<NaturalKeyValidator(queryset=ModelWithSingleUniqueField.objects.all(), fields=('code',))>]""".replace("             ", "")[1:]  # noqa
+        self.assertEqual(expect, str(serializer))
+
+        fields = serializer.get_fields()
+        self.assertTrue(fields['code'].required)
 
     def test_naturalkey_rest_post(self):
         # Posting a compound natural key should work
