@@ -21,7 +21,10 @@ Enhanced support for [natural keys] in Django and [Django REST Framework].  Extr
 *Django Natural Keys* is available via PyPI:
 
 ```bash
-pip3 install natural-keys
+# Recommended: create virtual environment
+# python3 -m venv venv
+# . venv/bin/activate
+pip install natural-keys
 ```
 
 ### Model API
