@@ -126,7 +126,11 @@ class NaturalKeyModel(models.Model):
         info = []
         for name in fields:
             field = cls._meta.get_field(name)
-            rel_to = field.rel.to if field.rel else None
+            rel_to = None
+            if hasattr(field, 'rel'):
+                rel_to = field.rel.to if field.rel else None
+            elif hasattr(field, 'remote_field'):
+                rel_to = field.remote_field.model if field.remote_field else None
             info.append((name, rel_to))
         return info
 
