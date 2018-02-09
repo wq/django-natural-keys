@@ -130,7 +130,10 @@ class NaturalKeyModel(models.Model):
             if hasattr(field, 'rel'):
                 rel_to = field.rel.to if field.rel else None
             elif hasattr(field, 'remote_field'):
-                rel_to = field.remote_field.model if field.remote_field else None
+                if field.remote_field:
+                    rel_to = field.remote_field.model
+                else:
+                    rel_to = None
             info.append((name, rel_to))
         return info
 
