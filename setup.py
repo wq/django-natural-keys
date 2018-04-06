@@ -33,7 +33,7 @@ def parse_markdown_readme():
 
 setup(
     name='natural-keys',
-    version='1.2.1',
+    version='1.3.0',
     author='S. Andrew Sheppard',
     author_email='andrew@wq.io',
     url='https://github.com/wq/django-natural-keys',
