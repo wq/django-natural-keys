@@ -1,21 +1,26 @@
 language: python
 sudo: false
-python:
- - "2.7"
- - "3.4"
- - "3.5"
- - "3.6"
-env:
-  global:
-   - DRF="djangorestframework==3.6.4"
-  matrix:
-   - DJANGO="django==1.8.18"
-   - DJANGO="django==1.10.8"
-   - DJANGO="django==1.11.5"
-   - DJANGO="django==1.11.5" LINT=1
+matrix:
+  include:
+    - python: "2.7"
+      env: [DJANGO=1.8.18, DRF=3.6.4]
+    - python: "2.7"
+      env: [DJANGO=1.11.12, DRF=3.8.2]
+    - python: "3.4"
+      env: [DJANGO=1.8.18, DRF=3.6.4]
+    - python: "3.4"
+      env: [DJANGO=2.0.4, DRF=3.8.2]
+    - python: "3.5"
+      env: [DJANGO=2.0.4, DRF=3.8.2]
+    - python: "3.6"
+      env: [DJANGO=1.11.12, DRF=3.8.2]
+    - python: "3.6"
+      env: [DJANGO=2.0.4, DRF=3.8.2]
+    - python: "3.6"
+      env: [DJANGO=2.0.4, DRF=3.8.2, LINT=1]
 install:
- - pip install $DJANGO
- - pip install $DRF
+ - pip install django==$DJANGO
+ - pip install djangorestframework==$DRF
  - pip install flake8
 script:
  - ./runtests.sh

@@ -11,7 +11,7 @@ class NaturalKeyParent(NaturalKeyModel):
 
 
 class NaturalKeyChild(NaturalKeyModel):
-    parent = models.ForeignKey(NaturalKeyParent)
+    parent = models.ForeignKey(NaturalKeyParent, on_delete=models.CASCADE)
     mode = models.CharField(max_length=10)
 
     class Meta:
@@ -19,7 +19,7 @@ class NaturalKeyChild(NaturalKeyModel):
 
 
 class ModelWithNaturalKey(models.Model):
-    key = models.ForeignKey(NaturalKeyChild)
+    key = models.ForeignKey(NaturalKeyChild, on_delete=models.CASCADE)
     value = models.CharField(max_length=10)
 
 
