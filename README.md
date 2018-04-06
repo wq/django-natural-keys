@@ -4,7 +4,7 @@ Enhanced support for [natural keys] in Django and [Django REST Framework].  Extr
 
 *Django Natural Keys* provides a number of useful model methods (e.g. `get_or_create_by_natural_key()`) that speed up working with natural keys in Django.  The module also provides a couple of serializer classes that streamline creating REST API support for models with natural keys.
 
-[![Latest PyPI Release](https://img.shields.io/pypi/v/natural-keys.svg)](https://pypi.python.org/pypi/natural-keys)
+[![Latest PyPI Release](https://img.shields.io/pypi/v/natural-keys.svg)](https://pypi.org/project/natural-keys/)
 [![Release Notes](https://img.shields.io/github/release/wq/django-natural-keys.svg)](https://github.com/wq/django-natural-keys/releases)
 [![License](https://img.shields.io/pypi/l/natural-keys.svg)](https://github.com/wq/django-natural-keys/blob/master/LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/wq/django-natural-keys.svg)](https://github.com/wq/django-natural-keys/stargazers)
@@ -12,8 +12,8 @@ Enhanced support for [natural keys] in Django and [Django REST Framework].  Extr
 [![GitHub Issues](https://img.shields.io/github/issues/wq/django-natural-keys.svg)](https://github.com/wq/django-natural-keys/issues)
 
 [![Travis Build Status](https://img.shields.io/travis/wq/django-natural-keys/master.svg)](https://travis-ci.org/wq/django-natural-keys)
-[![Python Support](https://img.shields.io/pypi/pyversions/natural-keys.svg)](https://pypi.python.org/pypi/natural-keys)
-[![Django Support](https://img.shields.io/badge/Django-1.8%2C%201.10%2C%201.11-blue.svg)](https://pypi.python.org/pypi/natural-keys)
+[![Python Support](https://img.shields.io/pypi/pyversions/natural-keys.svg)](https://pypi.org/project/natural-keys/)
+[![Django Support](https://img.shields.io/badge/Django-1.8%2C%201.11%2C%202.0-blue.svg)](https://pypi.org/project/natural-keys/)
 
 
 ## Usage
@@ -175,7 +175,7 @@ Once this is set up, you can use your REST API to create and view your `NaturalK
 ```
 
 
-[natural keys]: https://docs.djangoproject.com/en/1.9/topics/serialization/#natural-keys
+[natural keys]: https://docs.djangoproject.com/en/2.0/topics/serialization/#natural-keys
 [wq.db]: https://wq.io/wq.db
 [Django REST Framework]: http://www.django-rest-framework.org/
 [vera.Report]:https://github.com/wq/vera#report
