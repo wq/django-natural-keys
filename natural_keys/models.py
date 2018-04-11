@@ -2,10 +2,37 @@ from django.db import models
 from functools import reduce
 
 
+class NaturalKeyQuerySet(models.QuerySet):
+    def filter(self, natural_key_slug=None, *args, **kwargs):
+        if natural_key_slug:
+            slugs = natural_key_slug.split(
+                self.model.natural_key_separator
+            )
+            fields = self.model.get_natural_key_fields()
+            if len(slugs) > len(fields):
+                slugs[len(fields) - 1:] = [
+                    self.model.natural_key_separator.join(
+                        slugs[len(fields) - 1:]
+                    )
+                ]
+            kwargs.update(self.natural_key_kwargs(*slugs))
+
+        return super(NaturalKeyQuerySet, self).filter(*args, **kwargs)
+
+    def natural_key_kwargs(self, *args):
+        natural_key = self.model.get_natural_key_fields()
+        if len(args) != len(natural_key):
+            raise TypeError("Wrong number of values, expected %s"
+                            % len(natural_key))
+        return dict(zip(natural_key, args))
+
+
 class NaturalKeyModelManager(models.Manager):
     """
     Manager for use with subclasses of NaturalKeyModel.
     """
+    def get_queryset(self):
+        return NaturalKeyQuerySet(self.model, using=self._db)
 
     def get_by_natural_key(self, *args):
         """
@@ -84,11 +111,7 @@ class NaturalKeyModelManager(models.Manager):
         """
         Convert args into kwargs by merging with model's natural key fieldnames
         """
-        natural_key = self.model.get_natural_key_fields()
-        if len(args) != len(natural_key):
-            raise TypeError("Wrong number of values, expected %s"
-                            % len(natural_key))
-        return dict(zip(natural_key, args))
+        return self.get_queryset().natural_key_kwargs(*args)
 
     def resolve_keys(self, keys, auto_create=False):
         """
@@ -174,6 +197,14 @@ class NaturalKeyModel(models.Model):
         vals = [reduce(getattr, name.split('__'), self)
                 for name in self.get_natural_key_fields()]
         return vals
+
+    natural_key_separator = '-'
+
+    @property
+    def natural_key_slug(self):
+        return self.natural_key_separator.join(
+            str(slug) for slug in self.natural_key()
+        )
 
     class Meta:
         abstract = True

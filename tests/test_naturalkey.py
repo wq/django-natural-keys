@@ -269,3 +269,33 @@ class NaturalKeyRestTestCase(APITestCase):
             NaturalKeyChild.objects.count(),
             2
         )
+
+    def test_naturalkey_lookup(self):
+        # Support natural_key_slug as lookup_field setting
+        NaturalKeyChild.objects.find(
+            'code7', 'group7', 'mode7'
+        )
+        response = self.client.get(
+            '/naturalkeylookup/code7-group7-mode7.json',
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_200_OK, response.data
+        )
+        self.assertEqual(
+            response.data['id'], 'code7-group7-mode7'
+        )
+
+    def test_naturalkey_lookup_slug(self):
+        # Support separator in slug (but only for last part of key)
+        NaturalKeyChild.objects.find(
+            'code7', 'group7', 'mode7-alt'
+        )
+        response = self.client.get(
+            '/naturalkeylookup/code7-group7-mode7-alt.json',
+        )
+        self.assertEqual(
+            response.status_code, status.HTTP_200_OK, response.data
+        )
+        self.assertEqual(
+            response.data['id'], 'code7-group7-mode7-alt'
+        )

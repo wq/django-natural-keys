@@ -1,8 +1,11 @@
 from rest_framework import viewsets
+from rest_framework import serializers
 from .models import (
     NaturalKeyChild, ModelWithNaturalKey, ModelWithSingleUniqueField
 )
-from natural_keys import NaturalKeySerializer, NaturalKeyModelSerializer
+from natural_keys import (
+    NaturalKeySerializer, NaturalKeyModelSerializer
+)
 
 
 class NaturalKeyChildViewSet(viewsets.ModelViewSet):
@@ -26,3 +29,17 @@ class ModelWithSingleUniqueFieldViewSet(viewsets.ModelViewSet):
         ModelWithSingleUniqueField,
         include_fields="__all__",
     )
+
+
+class LookupSerializer(NaturalKeyModelSerializer):
+    id = serializers.ReadOnlyField(source="natural_key_slug")
+
+    class Meta:
+        model = NaturalKeyChild
+        fields = "__all__"
+
+
+class NaturalKeyLookupViewSet(viewsets.ModelViewSet):
+    queryset = NaturalKeyChild.objects.all()
+    serializer_class = LookupSerializer
+    lookup_field = 'natural_key_slug'
