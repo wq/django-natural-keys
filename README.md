@@ -174,6 +174,47 @@ Once this is set up, you can use your REST API to create and view your `NaturalK
 ]
 ```
 
+### Natural Key Slugs
+As an alternative to using `NaturalKeySerializer` / `NaturalKeyModelSerializer`, you can also use a single slug-like field for lookup and serialization.  `NaturalKeyModel` (and its associated queryset) defines a pseudo-field, `natural_key_slug`, for this purpose.
+
+```python
+class Place(NaturalKeyModel):
+    name = models.CharField(max_length=255, unique=True)
+    
+class Room(NaturalKeyModel)
+    place = models.ForeignKey(Place, models.ON_DELETE)
+    name = models.CharField(max_length=255)
+    
+    class Meta:
+        unique_together = (('place', 'name'),)
+```
+```python
+room = Room.objects.find("ABC123", "MainHall")
+assert(room.natural_key_slug == "ABC123-MainHall")
+assert(room == Room.objects.get(natural_key_slug="ABC123-MainHall"))
+```
+
+You can expose this functionality in your REST API to expose natural keys instead of database-generated ids.  To do this, you will likely want to do the following:
+
+ 1. Create a regular serializer with `id = serializers.ReadOnlyField(source='natural_key_slug')`
+ 2. Set `lookup_field = 'natural_key_slug'` on your `ModelViewSet` (or similar generic class) and update the URL registration accordingly
+ 3. Ensure foreign keys on any related models are serialized with `serializers.SlugRelatedField(slug_field='natural_key_slug')`
+
+In [wq.db], all three of the above can be achieved by setting the `"lookup"` attribute when registering with the [router]:
+
+```python
+# myapp/rest.py
+from wq.db import rest
+from .models import Room
+
+rest.router.register_model(
+    Room,
+    fields='__all__',
+    lookup='natural_key_slug',
+)
+```
+
+Note that the `natural_key_slug` may not behave as expected if any of the component values contain the delimiter character (`-` by default).  To mitigate this, you can set `natural_key_separator` on the model class to another character.
 
 [natural keys]: https://docs.djangoproject.com/en/2.0/topics/serialization/#natural-keys
 [wq.db]: https://wq.io/wq.db
@@ -181,3 +222,4 @@ Once this is set up, you can use your REST API to create and view your `NaturalK
 [vera.Report]:https://github.com/wq/vera#report
 [vera.Event]: https://github.com/wq/vera#event
 [HTML JSON Forms]: https://github.com/wq/html-json-forms
+[router]: https://wq.io/docs/router
