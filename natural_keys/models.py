@@ -162,6 +162,9 @@ class NaturalKeyModel(models.Model):
 
     @classmethod
     def get_natural_key_def(cls):
+        if hasattr(cls, '_natural_key'):
+            return cls._natural_key
+
         try:
             return cls._meta.unique_together[0]
         except IndexError:
