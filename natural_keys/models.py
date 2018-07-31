@@ -5,7 +5,7 @@ from functools import reduce
 class NaturalKeyQuerySet(models.QuerySet):
     def filter(self, *args, **kwargs):
         natural_key_slug = kwargs.pop('natural_key_slug', None)
-        if natural_key_slug:
+        if natural_key_slug and type(natural_key_slug) is str:
             slugs = natural_key_slug.split(
                 self.model.natural_key_separator
             )
