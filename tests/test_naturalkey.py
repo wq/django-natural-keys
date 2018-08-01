@@ -302,4 +302,8 @@ class NaturalKeyRestTestCase(APITestCase):
 
     def test_filter_with_Q(self):
         from django.db.models import Q
-        self.assertEqual(ModelWithSingleUniqueField.objects.filter(Q(code="bizarre")).count(), 0)
+        query = Q(code="bizarre")
+        self.assertEqual(
+            ModelWithSingleUniqueField.objects.filter(query).count(),
+            0
+        )
