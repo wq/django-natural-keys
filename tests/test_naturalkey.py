@@ -299,3 +299,7 @@ class NaturalKeyRestTestCase(APITestCase):
         self.assertEqual(
             response.data['id'], 'code7-group7-mode7-alt'
         )
+
+    def test_filter_with_Q(self):
+        from django.db.models import Q
+        self.assertEqual(ModelWithSingleUniqueField.objects.filter(Q(code="bizarre")).count(), 0)
