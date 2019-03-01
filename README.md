@@ -13,7 +13,7 @@ Enhanced support for [natural keys] in Django and [Django REST Framework].  Extr
 
 [![Travis Build Status](https://img.shields.io/travis/wq/django-natural-keys/master.svg)](https://travis-ci.org/wq/django-natural-keys)
 [![Python Support](https://img.shields.io/pypi/pyversions/natural-keys.svg)](https://pypi.org/project/natural-keys/)
-[![Django Support](https://img.shields.io/badge/Django-1.8%2C%201.11%2C%202.0-%2C%202.1-blue.svg)](https://pypi.org/project/natural-keys/)
+[![Django Support](https://img.shields.io/pypi/djversions/natural-keys.svg)](https://pypi.org/project/natural-keys/)
 
 
 ## Usage
@@ -95,18 +95,29 @@ instance = Event.find('ABC123', date(2016, 1, 1))
 instance.place.name == 'ABC123'
 ```
 
-### Serializers
-*Django Natural Keys* provides two `ModelSerializer` classes for use with [Django REST Framework].  The first is `NaturalKeySerializer`, which is meant to be used with `NaturalKeyModel` classes.  The second serializer class, `NaturalKeyModelSerializer`, handles the more common use case: serializing a model that has a foreign key to a `NaturalKeyModel` but is not a `NaturalKeyModel` itself.  (One concrete example of this is the [vera.Report] model, which has a ForeignKey to [vera.Event], which is a `NaturalKeyModel`).
+### REST Framework Support
+*Django Natural Keys* provides several integrations with [Django REST Framework], primarily through custom Serializer classes.  In most cases, you will want to use either:
+ * `NaturalKeyModelSerializer`, or
+ * The `natural_key_slug` pseudo-field (see below)
 
-You can use these serializer classes with [Django REST Framework] and/or [wq.db] just like any other serializer:
+If you have only a single model with a single char field for its natural key, you probably do not need to use either of these integrations.  In your view, you can just use Django REST Framework's built in `lookup_field` to point directly to your natural key.
+
+#### `NaturalKeyModelSerializer`
+`NaturalKeyModelSerializer` facilitates handling complex natural keys in your rest API.  It can be used with a `NaturalKeyModel`, or (more commonly) a model that has a foreign key to a `NaturalKeyModel` but is not a `NaturalKeyModel` itself.  (One concrete example of this is the [vera.Report] model, which has a ForeignKey to [vera.Event], which is a `NaturalKeyModel`).
+
+`NaturalKeyModelSerializer` extends DRF's [ModelSerializer], but uses `NaturalKeySerializer` for each foreign key that points to a `NaturalKeyModel`.  When `update()` or `create()`ing the primary model, the nested `NaturalKeySerializer`s will automatically create instances of referenced models if they do not exist already (via the `find()` method described above).  Note that `NaturalKeyModelSerializer` does not override DRF's default behavior for other fields, whether or not they form part of the primary model's natural key.
+
+`NaturalKeySerializer` can technically be used as a top level serializer, though this is not recommended.  `NaturalKeySerializer` is designed for dealing with nested natural keys and does not support updates or non-natural key fields.
+
+You can use `NaturalKeyModelSerializer` with [Django REST Framework] and/or [wq.db] just like any other serializer:
 ```python
 # Django REST Framework usage example
 from rest_framework import viewsets
 from rest_framework import routers
-from natural_keys import NaturalKeySerializer, NaturalKeyModelSerializer
+from natural_keys import NaturalKeyModelSerializer
 from .models import Event, Note
 
-class EventSerializer(NaturalKeySerializer):
+class EventSerializer(NaturalKeyModelSerializer):
     class Meta:
         model = Event
         
@@ -128,11 +139,11 @@ router.register(r'notes', NoteViewSet)
 
 # wq.db usage example
 from wq.db import rest
-from natural_keys import NaturalKeySerializer, NaturalKeyModelSerializer
+from natural_keys import NaturalKeyModelSerializer
 from .models import Event, Note
 
-rest.router.register_model(Event, serializer=NaturalKeySerializer)
 rest.router.register_model(Note, serializer=NaturalKeyModelSerializer)
+rest.router.register_model(Event, serializer=NaturalKeyModelSerializer)
 ```
 
 Once this is set up, you can use your REST API to create and view your `NaturalKeyModel` instances and related data.  To facilitate integration with regular HTML Forms, *Django Natural Keys* is integrated with the [HTML JSON Forms] package, which supports nested keys via an array naming convention, as the examples below demonstrate.
@@ -175,7 +186,7 @@ Once this is set up, you can use your REST API to create and view your `NaturalK
 ```
 
 ### Natural Key Slugs
-As an alternative to using `NaturalKeySerializer` / `NaturalKeyModelSerializer`, you can also use a single slug-like field for lookup and serialization.  `NaturalKeyModel` (and its associated queryset) defines a pseudo-field, `natural_key_slug`, for this purpose.
+As an alternative to using `NaturalKeyModelSerializer` / `NaturalKeySerializer`, you can also use a single slug-like field for lookup and serialization.  `NaturalKeyModel` (and its associated queryset) defines a pseudo-field, `natural_key_slug`, for this purpose.
 
 ```python
 class Place(NaturalKeyModel):
@@ -221,5 +232,6 @@ Note that the `natural_key_slug` may not behave as expected if any of the compon
 [Django REST Framework]: http://www.django-rest-framework.org/
 [vera.Report]:https://github.com/wq/vera#report
 [vera.Event]: https://github.com/wq/vera#event
+[ModelSerializer]: https://www.django-rest-framework.org/api-guide/serializers/#modelserializer
 [HTML JSON Forms]: https://github.com/wq/html-json-forms
 [router]: https://wq.io/docs/router
