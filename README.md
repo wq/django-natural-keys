@@ -13,7 +13,7 @@ Enhanced support for [natural keys] in Django and [Django REST Framework].  Extr
 
 [![Travis Build Status](https://img.shields.io/travis/wq/django-natural-keys/master.svg)](https://travis-ci.org/wq/django-natural-keys)
 [![Python Support](https://img.shields.io/pypi/pyversions/natural-keys.svg)](https://pypi.org/project/natural-keys/)
-[![Django Support](https://img.shields.io/badge/Django-1.8%2C%201.11%2C%202.0-blue.svg)](https://pypi.org/project/natural-keys/)
+[![Django Support](https://img.shields.io/badge/Django-1.8%2C%201.11%2C%202.0-%2C%202.1-blue.svg)](https://pypi.org/project/natural-keys/)
 
 
 ## Usage

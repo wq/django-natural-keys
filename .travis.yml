@@ -3,21 +3,29 @@ sudo: false
 matrix:
   include:
     - python: "2.7"
-      env: [DJANGO=1.8.18, DRF=3.6.4]
-    - python: "2.7"
-      env: [DJANGO=1.11.12, DRF=3.8.2]
-    - python: "3.4"
-      env: [DJANGO=1.8.18, DRF=3.6.4]
-    - python: "3.4"
-      env: [DJANGO=2.0.4, DRF=3.8.2]
+      env: [DJANGO=1.8.19, DRF=3.6.4]
     - python: "3.5"
-      env: [DJANGO=2.0.4, DRF=3.8.2]
+      env: [DJANGO=1.8.19, DRF=3.6.4]
+    - python: "2.7"
+      env: [DJANGO=1.11.20, DRF=3.9.1]
+    - python: "3.7"
+      env: [DJANGO=1.11.20, DRF=3.9.1]
+    - python: "3.4"
+      env: [DJANGO=2.0.13, DRF=3.9.1]
+    - python: "3.5"
+      env: [DJANGO=2.0.13, DRF=3.9.1]
     - python: "3.6"
-      env: [DJANGO=1.11.12, DRF=3.8.2]
+      env: [DJANGO=2.0.13, DRF=3.9.1]
+    - python: "3.7"
+      env: [DJANGO=2.1.7, DRF=3.9.1]
+    - python: "3.5"
+      env: [DJANGO=2.1.7, DRF=3.9.1]
     - python: "3.6"
-      env: [DJANGO=2.0.4, DRF=3.8.2]
-    - python: "3.6"
-      env: [DJANGO=2.0.4, DRF=3.8.2, LINT=1]
+      env: [DJANGO=2.1.7, DRF=3.9.1]
+    - python: "3.7"
+      env: [DJANGO=2.1.7, DRF=3.9.1]
+    - python: "3.7"
+      env: [DJANGO=2.1.7, DRF=3.9.1, LINT=1]
 install:
  - pip install django==$DJANGO
  - pip install djangorestframework==$DRF

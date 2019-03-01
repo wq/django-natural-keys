@@ -6,41 +6,26 @@ Enhanced support for natural keys in Django and Django REST Framework
 """
 
 
-def parse_markdown_readme():
-    """
-    Convert README.md to RST via pandoc, and load into memory
-    (fallback to LONG_DESCRIPTION on failure)
-    """
-    # Attempt to run pandoc on markdown file
-    import subprocess
+def readme():
     try:
-        subprocess.call(
-            ['pandoc', '-t', 'rst', '-o', 'README.rst', 'README.md']
-        )
-    except OSError:
-        return LONG_DESCRIPTION
-
-    # Attempt to load output
-    try:
-        readme = open(os.path.join(
-            os.path.dirname(__file__),
-            'README.rst'
-        ))
+        readme = open('README.md')
     except IOError:
         return LONG_DESCRIPTION
-    return readme.read()
+    else:
+        return readme.read()
 
 
 setup(
     name='natural-keys',
-    version='1.4.0',
+    use_scm_version=True,
     author='S. Andrew Sheppard',
     author_email='andrew@wq.io',
     url='https://github.com/wq/django-natural-keys',
     license='MIT',
     packages=['natural_keys'],
     description=LONG_DESCRIPTION.strip(),
-    long_description=parse_markdown_readme(),
+    long_description=readme(),
+    long_description_content_type="text/markdown",
     install_requires=[
         'html-json-forms>=1.0.0',
     ],
@@ -55,14 +40,19 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Framework :: Django',
         'Framework :: Django :: 1.8',
         'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.0',
+        'Framework :: Django :: 2.1',
         'Topic :: Database',
     ],
     test_suite='tests',
     tests_require=[
         'djangorestframework'
+    ],
+    setup_requires=[
+        'setuptools_scm',
     ],
 )
