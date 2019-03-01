@@ -107,7 +107,8 @@ If you have only a single model with a single char field for its natural key, yo
 
 `NaturalKeyModelSerializer` extends DRF's [ModelSerializer], but uses `NaturalKeySerializer` for each foreign key that points to a `NaturalKeyModel`.  When `update()` or `create()`ing the primary model, the nested `NaturalKeySerializer`s will automatically create instances of referenced models if they do not exist already (via the `find()` method described above).  Note that `NaturalKeyModelSerializer` does not override DRF's default behavior for other fields, whether or not they form part of the primary model's natural key.
 
-`NaturalKeySerializer` can technically be used as a top level serializer, though this is not recommended.  `NaturalKeySerializer` is designed for dealing with nested natural keys and does not support updates or non-natural key fields.
+`NaturalKeySerializer` can technically be used as a top level serializer, though this is not recommended.  `NaturalKeySerializer` is designed for dealing with nested natural keys and does not support updates or non-natural key fields.  Even when used together with `NaturalKeyModelSerializer`, `NaturalKeySerializer` never updates an existing related model instance.  Instead, it will repoint the foreign key to another (potentially new) instance of the related model.  It may help to think of `NaturalKeySerializer` as a special [RelatedField] class rather than as a `Serializer` per se.
+
 
 You can use `NaturalKeyModelSerializer` with [Django REST Framework] and/or [wq.db] just like any other serializer:
 ```python
@@ -233,5 +234,6 @@ Note that the `natural_key_slug` may not behave as expected if any of the compon
 [vera.Report]:https://github.com/wq/vera#report
 [vera.Event]: https://github.com/wq/vera#event
 [ModelSerializer]: https://www.django-rest-framework.org/api-guide/serializers/#modelserializer
+[RelatedField]: https://www.django-rest-framework.org/api-guide/relations/
 [HTML JSON Forms]: https://github.com/wq/html-json-forms
 [router]: https://wq.io/docs/router
