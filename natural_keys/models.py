@@ -16,6 +16,8 @@ class NaturalKeyQuerySet(models.QuerySet):
                         slugs[len(fields) - 1:]
                     )
                 ]
+            elif len(slugs) < len(fields):
+                return self.none()
             kwargs.update(self.natural_key_kwargs(*slugs))
 
         return super(NaturalKeyQuerySet, self).filter(*args, **kwargs)

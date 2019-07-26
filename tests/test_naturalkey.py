@@ -300,6 +300,14 @@ class NaturalKeyRestTestCase(APITestCase):
             response.data['id'], 'code7-group7-mode7-alt'
         )
 
+    def test_invalid_slug_404(self):
+        response = self.client.get(
+            '/naturalkeylookup/not-valid.json',
+        )
+        self.assertEqual(
+            status.HTTP_404_NOT_FOUND, response.status_code,
+        )
+
     def test_filter_with_Q(self):
         from django.db.models import Q
         query = Q(code="bizarre")
