@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from tests.test_app.models import (
     NaturalKeyParent, NaturalKeyChild, ModelWithNaturalKey,
-    ModelWithSingleUniqueField
+    ModelWithSingleUniqueField, ModelWithExtraField
 )
 from natural_keys import NaturalKeySerializer
 from django.db.utils import IntegrityError
@@ -314,4 +314,26 @@ class NaturalKeyRestTestCase(APITestCase):
         self.assertEqual(
             ModelWithSingleUniqueField.objects.filter(query).count(),
             0
+        )
+
+    def test_find_with_defaults(self):
+        obj = ModelWithExtraField.objects.find(
+            'extra1',
+            '2019-07-26',
+            defaults={'extra': 'Test 123'},
+        )
+        self.assertEqual(
+            obj.extra,
+            'Test 123'
+        )
+
+    def test_find_with_kwargs(self):
+        with self.assertRaises(TypeError) as e:
+            ModelWithExtraField.objects.find(
+                'extra1',
+                date='2019-07-26',
+            )
+        self.assertEqual(
+            str(e.exception),
+            "find() got an unexpected keyword argument 'date'"
         )

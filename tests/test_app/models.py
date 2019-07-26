@@ -25,3 +25,12 @@ class ModelWithNaturalKey(models.Model):
 
 class ModelWithSingleUniqueField(NaturalKeyModel):
     code = models.CharField(max_length=10, unique=True)
+
+
+class ModelWithExtraField(NaturalKeyModel):
+    code = models.CharField(max_length=10, unique=True)
+    date = models.DateField(max_length=10, unique=True)
+    extra = models.TextField()
+
+    class Meta:
+        unique_together = ['code', 'date']
