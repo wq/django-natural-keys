@@ -8,19 +8,30 @@ from collections import OrderedDict
 
 class NaturalKeyValidator(serializers.UniqueTogetherValidator):
     def set_context(self, serializer):
-        self.nested_fields = {
+        if getattr(self, 'requires_context', None):
+            # DRF 3.11+
+            pass
+        else:
+            # DRF 3.10 and older
+            self.serializer = serializer
+            super(NaturalKeyValidator, self).set_context(serializer)
+
+    def filter_queryset(self, attrs, queryset, serializer=None):
+        if not serializer:
+            # DRF 3.10 and older
+            serializer = self.serializer
+
+        nested_fields = {
             name: serializer.fields[name]
             for name in self.fields
             if isinstance(serializer.fields[name], NaturalKeySerializer)
         }
-        super(NaturalKeyValidator, self).set_context(serializer)
 
-    def filter_queryset(self, attrs, queryset):
         attrs = attrs.copy()
         for field in attrs:
-            if field in self.nested_fields:
+            if field in nested_fields:
                 assert(isinstance(attrs[field], dict))
-                cls = self.nested_fields[field].Meta.model
+                cls = nested_fields[field].Meta.model
                 result = cls._default_manager.filter(
                     **attrs[field]
                 )
@@ -31,9 +42,16 @@ class NaturalKeyValidator(serializers.UniqueTogetherValidator):
                     # Existing nested object, use it to validate
                     attrs[field] = result[0].pk
 
-        return super(NaturalKeyValidator, self).filter_queryset(
-            attrs, queryset
-        )
+        if getattr(self, 'requires_context', None):
+            # DRF 3.11+
+            return super(NaturalKeyValidator, self).filter_queryset(
+                attrs, queryset, serializer
+            )
+        else:
+            # DRF 3.10 and older
+            return super(NaturalKeyValidator, self).filter_queryset(
+                attrs, queryset
+            )
 
 
 class NaturalKeySerializer(JSONFormModelSerializer):
