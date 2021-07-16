@@ -185,7 +185,7 @@ class NaturalKeyModel(models.Model):
             return cls._meta.unique_together[0]
         except IndexError:
             unique = [f for f in cls._meta.fields
-                      if f.unique and not f.__class__.__name__ == 'AutoField']
+                      if f.unique and f.__class__.__name__ not in ['AutoField', 'BigAutoField']]
             return (unique[0].name, )
 
     @classmethod
