@@ -29,7 +29,13 @@ pip install natural-keys
 
 ### Model API
 
-To use [natural keys] in vanilla Django, you need to define a `natural_key()` method on your Model class and a `get_natural_key()` method on the Manager class.  With *Django Natural Keys*, you can instead extend `NaturalKeyModel` and define a `unique_together` property on your Model's `Meta` class or use a field with `unique=True`.  The first `unique_together` entry or the first `unique` field (except an AutoField) will be treated as the natural key for the model, and all of the necessary functions for working with natural keys will automatically work.
+To use [natural keys] in vanilla Django, you need to define a `natural_key()` method on your Model class and a `get_natural_key()` method on the Manager class.  With *Django Natural Keys*, you can instead extend `NaturalKeyModel` and define one of the following:
+
+ * A [`UniqueConstraint`](https://docs.djangoproject.com/en/3.2/ref/models/constraints/#uniqueconstraint) in `Meta.constraints (recommended),
+ * A tuple in [`Meta.unique_together`](https://docs.djangoproject.com/en/3.2/ref/models/options/#unique-together), or
+ * A [model field](https://docs.djangoproject.com/en/3.2/ref/models/fields/#unique) (other than `AutoField`) with `unique=True`
+
+The first unique constraint found will be treated as the natural key for the model, and all of the necessary functions for working with natural keys will automatically work.
 
 ```python
 from natural_keys import NaturalKeyModel
@@ -38,7 +44,12 @@ class Event(NaturalKeyModel):
     name = models.CharField(max_length=255)
     date = models.DateField()
     class Meta:
-        unique_together = (('name','date'),)
+        constraints = [
+            models.UniqueConstraint(
+                fields=('name', 'date'),
+                name='event_natural_key',
+            )
+        ]
         
 class Note(models.Model):
     event = models.ForeignKey(Event)
@@ -86,7 +97,12 @@ class Event(NaturalKeyModel):
     place = models.ForeignKey(Place)
     date = models.DateField()
     class Meta:
-        unique_together = (('place', 'date'),)
+        constraints = [
+            models.UniqueConstraint(
+                fields=('place', 'date'),
+                name='event_natural_key',
+            )
+        ]
 ```
 
 ```python

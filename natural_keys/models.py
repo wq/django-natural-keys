@@ -176,12 +176,24 @@ class NaturalKeyModel(models.Model):
         if hasattr(cls, '_natural_key'):
             return cls._natural_key
 
-        try:
+        for constraint in cls._meta.constraints:
+            if isinstance(constraint, models.UniqueConstraint):
+                return constraint.fields
+
+        if cls._meta.unique_together:
             return cls._meta.unique_together[0]
-        except IndexError:
-            unique = [f for f in cls._meta.fields
-                      if f.unique and f.__class__.__name__ not in ['AutoField', 'BigAutoField']]
+
+        unique = [
+            f for f in cls._meta.fields
+            if f.unique and f.__class__.__name__ not in [
+                'AutoField', 'BigAutoField'
+            ]
+        ]
+        if unique:
             return (unique[0].name, )
+
+        raise Exception("Add a UniqueConstraint to use natural-keys")
+
 
     @classmethod
     def get_natural_key_fields(cls):

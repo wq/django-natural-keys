@@ -1,7 +1,7 @@
 from django.test import TestCase
 from tests.test_app.models import (
     NaturalKeyParent, NaturalKeyChild,
-    ModelWithSingleUniqueField, ModelWithExtraField
+    ModelWithSingleUniqueField, ModelWithExtraField, ModelWithConstraint
 )
 from django.db.utils import IntegrityError
 
@@ -107,4 +107,14 @@ class NaturalKeyTestCase(TestCase):
         self.assertEqual(
             str(e.exception),
             "find() got an unexpected keyword argument 'date'"
+        )
+
+    def test_find_with_constraint(self):
+        obj = ModelWithConstraint.objects.find(
+            'constraint1',
+            '2021-08-23',
+        )
+        self.assertEqual(
+            str(obj),
+            'constraint1 2021-08-23'
         )

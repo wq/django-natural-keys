@@ -28,9 +28,25 @@ class ModelWithSingleUniqueField(NaturalKeyModel):
 
 
 class ModelWithExtraField(NaturalKeyModel):
-    code = models.CharField(max_length=10, unique=True)
-    date = models.DateField(max_length=10, unique=True)
+    code = models.CharField(max_length=10)
+    date = models.DateField(max_length=10)
     extra = models.TextField()
 
     class Meta:
         unique_together = ['code', 'date']
+
+
+class ModelWithConstraint(NaturalKeyModel):
+    code = models.CharField(max_length=10)
+    date = models.DateField(max_length=10)
+
+    def __str__(self):
+         return f'{self.code} {self.date}'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name='natural key',
+                fields=['code', 'date'],
+            ),
+        ]
