@@ -45,10 +45,6 @@ setup(
         'Framework :: Django :: 3.2',
         'Topic :: Database',
     ],
-    test_suite='tests',
-    tests_require=[
-        'djangorestframework'
-    ],
     setup_requires=[
         'setuptools_scm',
     ],
