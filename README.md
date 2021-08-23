@@ -11,7 +11,7 @@ Enhanced support for [natural keys] in Django and [Django REST Framework].  Extr
 [![GitHub Forks](https://img.shields.io/github/forks/wq/django-natural-keys.svg)](https://github.com/wq/django-natural-keys/network)
 [![GitHub Issues](https://img.shields.io/github/issues/wq/django-natural-keys.svg)](https://github.com/wq/django-natural-keys/issues)
 
-[![Travis Build Status](https://img.shields.io/travis/wq/django-natural-keys/master.svg)](https://travis-ci.org/wq/django-natural-keys)
+[![Tests](https://github.com/wq/django-natural-keys/actions/workflows/test.yml/badge.svg)](https://github.com/wq/django-natural-keys/actions/workflows/test.yml)
 [![Python Support](https://img.shields.io/pypi/pyversions/natural-keys.svg)](https://pypi.org/project/natural-keys/)
 [![Django Support](https://img.shields.io/pypi/djversions/natural-keys.svg)](https://pypi.org/project/natural-keys/)
 
