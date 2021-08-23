@@ -31,7 +31,7 @@ pip install natural-keys
 
 To use [natural keys] in vanilla Django, you need to define a `natural_key()` method on your Model class and a `get_natural_key()` method on the Manager class.  With *Django Natural Keys*, you can instead extend `NaturalKeyModel` and define one of the following:
 
- * A [`UniqueConstraint`](https://docs.djangoproject.com/en/3.2/ref/models/constraints/#uniqueconstraint) in `Meta.constraints (recommended),
+ * A [`UniqueConstraint`](https://docs.djangoproject.com/en/3.2/ref/models/constraints/#uniqueconstraint) in `Meta.constraints` (recommended),
  * A tuple in [`Meta.unique_together`](https://docs.djangoproject.com/en/3.2/ref/models/options/#unique-together), or
  * A [model field](https://docs.djangoproject.com/en/3.2/ref/models/fields/#unique) (other than `AutoField`) with `unique=True`
 

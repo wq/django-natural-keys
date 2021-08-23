@@ -41,7 +41,7 @@ class ModelWithConstraint(NaturalKeyModel):
     date = models.DateField(max_length=10)
 
     def __str__(self):
-         return f'{self.code} {self.date}'
+        return f'{self.code} {self.date}'
 
     class Meta:
         constraints = [

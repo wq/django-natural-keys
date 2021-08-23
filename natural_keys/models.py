@@ -194,7 +194,6 @@ class NaturalKeyModel(models.Model):
 
         raise Exception("Add a UniqueConstraint to use natural-keys")
 
-
     @classmethod
     def get_natural_key_fields(cls):
         """
