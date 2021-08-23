@@ -71,14 +71,13 @@ class NaturalKeyModelManager(models.Manager):
 
         return self.get(**kwargs)
 
-    def create_by_natural_key(self, *args, **kwargs):
+    def create_by_natural_key(self, *args, defaults=None):
         """
         Create a new object from the provided natural key values.  If the
         natural key contains related objects, recursively get or create them by
         their natural keys.
         """
 
-        defaults = keyword_only_defaults(kwargs, 'create_by_natural_key')
         kwargs = self.natural_key_kwargs(*args)
         for name, rel_to in self.model.get_natural_key_info():
             if not rel_to:
@@ -98,25 +97,21 @@ class NaturalKeyModelManager(models.Manager):
             attrs = kwargs
         return self.create(**attrs)
 
-    def get_or_create_by_natural_key(self, *args, **kwargs):
+    def get_or_create_by_natural_key(self, *args, defaults=None):
         """
         get_or_create + get_by_natural_key
         """
-        defaults = keyword_only_defaults(
-            kwargs, 'get_or_create_by_natural_key'
-        )
         try:
             return self.get_by_natural_key(*args), False
         except self.model.DoesNotExist:
             return self.create_by_natural_key(*args, defaults=defaults), True
 
     # Shortcut for common use case
-    def find(self, *args, **kwargs):
+    def find(self, *args, defaults=None):
         """
         Shortcut for get_or_create_by_natural_key that discards the "created"
         boolean.
         """
-        defaults = keyword_only_defaults(kwargs, 'find')
         obj, is_new = self.get_or_create_by_natural_key(
             *args,
             defaults=defaults
@@ -252,16 +247,3 @@ def extract_nested_key(key, cls, prefix=''):
         return values
     else:
         return None
-
-
-# TODO: Once we drop Python 2.7 support, this can be removed
-def keyword_only_defaults(kwargs, fname):
-    defaults = kwargs.pop('defaults', None)
-    if kwargs:
-        raise TypeError(
-            "{fname}() got an unexpected keyword argument '{arg}'".format(
-                fname=fname,
-                arg=list(kwargs.keys())[0]
-            )
-        )
-    return defaults
