@@ -1,4 +1,4 @@
-from rest_framework.test import APITestCase
+from django.test import TestCase
 from tests.test_app.models import (
     NaturalKeyParent, NaturalKeyChild,
     ModelWithSingleUniqueField, ModelWithExtraField
@@ -8,7 +8,7 @@ from django.db.utils import IntegrityError
 # Tests for natural key models
 
 
-class NaturalKeyTestCase(APITestCase):
+class NaturalKeyTestCase(TestCase):
     def test_naturalkey_fields(self):
         # Model APIs
         self.assertEqual(

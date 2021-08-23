@@ -1,5 +1,9 @@
 from .models import NaturalKeyModel, NaturalKeyModelManager, NaturalKeyQuerySet
-from .serializers import NaturalKeySerializer, NaturalKeyModelSerializer
+try:
+    from .serializers import NaturalKeySerializer, NaturalKeyModelSerializer
+except ImportError:
+    NaturalKeySerializer = None
+    NaturalKeyModelSerializer = None
 
 
 __all__ = [

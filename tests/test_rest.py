@@ -1,4 +1,10 @@
-from rest_framework.test import APITestCase
+import unittest
+
+try:
+    from rest_framework.test import APITestCase
+except ImportError:
+    raise unittest.SkipTest("Skipping DRF tests as DRF is not installed.")
+
 from rest_framework import status
 from tests.test_app.models import (
     NaturalKeyChild, ModelWithNaturalKey, ModelWithSingleUniqueField,
