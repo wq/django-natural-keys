@@ -6,7 +6,7 @@ Enhanced support for [natural keys] in Django and [Django REST Framework].  Extr
 
 [![Latest PyPI Release](https://img.shields.io/pypi/v/natural-keys.svg)](https://pypi.org/project/natural-keys/)
 [![Release Notes](https://img.shields.io/github/release/wq/django-natural-keys.svg)](https://github.com/wq/django-natural-keys/releases)
-[![License](https://img.shields.io/pypi/l/natural-keys.svg)](https://github.com/wq/django-natural-keys/blob/master/LICENSE)
+[![License](https://img.shields.io/pypi/l/natural-keys.svg)](https://github.com/wq/django-natural-keys/blob/main/LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/wq/django-natural-keys.svg)](https://github.com/wq/django-natural-keys/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/wq/django-natural-keys.svg)](https://github.com/wq/django-natural-keys/network)
 [![GitHub Issues](https://img.shields.io/github/issues/wq/django-natural-keys.svg)](https://github.com/wq/django-natural-keys/issues)
@@ -31,9 +31,9 @@ pip install natural-keys
 
 To use [natural keys] in vanilla Django, you need to define a `natural_key()` method on your Model class and a `get_natural_key()` method on the Manager class.  With *Django Natural Keys*, you can instead extend `NaturalKeyModel` and define one of the following:
 
- * A [`UniqueConstraint`](https://docs.djangoproject.com/en/3.2/ref/models/constraints/#uniqueconstraint) in `Meta.constraints` (recommended),
- * A tuple in [`Meta.unique_together`](https://docs.djangoproject.com/en/3.2/ref/models/options/#unique-together), or
- * A [model field](https://docs.djangoproject.com/en/3.2/ref/models/fields/#unique) (other than `AutoField`) with `unique=True`
+ * A [`UniqueConstraint`][UniqueConstraint] in `Meta.constraints` (recommended),
+ * A tuple in [`Meta.unique_together`][unique_together], or
+ * A [model field][unique] (other than `AutoField`) with `unique=True`
 
 The first unique constraint found will be treated as the natural key for the model, and all of the necessary functions for working with natural keys will automatically work.
 
@@ -244,12 +244,16 @@ rest.router.register_model(
 
 Note that the `natural_key_slug` may not behave as expected if any of the component values contain the delimiter character (`-` by default).  To mitigate this, you can set `natural_key_separator` on the model class to another character.
 
-[natural keys]: https://docs.djangoproject.com/en/2.0/topics/serialization/#natural-keys
-[wq.db]: https://wq.io/wq.db
+[natural keys]: https://docs.djangoproject.com/en/3.2/topics/serialization/#natural-keys
+[UniqueConstraint]: https://docs.djangoproject.com/en/3.2/ref/models/constraints/#uniqueconstraint
+[unique_together]: https://docs.djangoproject.com/en/3.2/ref/models/options/#unique-together
+[unique]: https://docs.djangoproject.com/en/3.2/ref/models/fields/#unique
+
+[wq.db]: https://wq.io/wq.db/
 [Django REST Framework]: http://www.django-rest-framework.org/
-[vera.Report]:https://github.com/wq/vera#report
-[vera.Event]: https://github.com/wq/vera#event
+[vera.Report]:https://github.com/powered-by-wq/vera#report
+[vera.Event]: https://github.com/powered-by-wq/vera#event
 [ModelSerializer]: https://www.django-rest-framework.org/api-guide/serializers/#modelserializer
 [RelatedField]: https://www.django-rest-framework.org/api-guide/relations/
 [HTML JSON Forms]: https://github.com/wq/html-json-forms
-[router]: https://wq.io/docs/router
+[router]: https://wq.io/wq.db/router
