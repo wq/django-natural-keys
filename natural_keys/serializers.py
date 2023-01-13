@@ -168,6 +168,8 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
         info = model_meta.get_field_info(self.Meta.model)
         fields = OrderedDict()
         for field, relation_info in info.relations.items():
+            if relation_info.reverse:
+                continue
             if not issubclass(relation_info.related_model, NaturalKeyModel):
                 continue
             field_class, field_kwargs = self.build_nested_field(
