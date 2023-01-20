@@ -133,8 +133,11 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
     """
     Serializer for models with one or more foreign keys to a NaturalKeyModel
     """
+    def is_natural_key_model(self, related_model):
+        return issubclass(related_model, NaturalKeyModel)
+
     def build_nested_field(self, field_name, relation_info, nested_depth):
-        if issubclass(relation_info.related_model, NaturalKeyModel):
+        if self.is_natural_key_model(relation_info.related_model):
             field_class = NaturalKeySerializer.for_model(
                 relation_info.related_model,
                 validate_key=False,
@@ -154,7 +157,7 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
         ).build_relational_field(
             field_name, relation_info
         )
-        if issubclass(relation_info.related_model, NaturalKeyModel):
+        if self.is_natural_key_model(relation_info.related_model):
             field_kwargs.pop('queryset')
             field_kwargs['read_only'] = True
         return field_class, field_kwargs
@@ -170,7 +173,7 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
         for field, relation_info in info.relations.items():
             if relation_info.reverse:
                 continue
-            if not issubclass(relation_info.related_model, NaturalKeyModel):
+            if not self.is_natural_key_model(relation_info.related_model):
                 continue
             field_class, field_kwargs = self.build_nested_field(
                 field, relation_info, 1
