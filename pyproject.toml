@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+
+[project]
+name = "natural-keys"
+dynamic = ["version"]
+authors = [
+    {name = "S. Andrew Sheppard", email = "andrew@wq.io"},
+]
+description = "Enhanced support for natural keys in Django and Django REST Framework."
+readme = "README.md"
+requires-python = ">=3.7"
+license = {text = "MIT" }
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Framework :: Django",
+    "Framework :: Django :: 3.2",
+    "Framework :: Django :: 4.0",
+    "Framework :: Django :: 4.1",
+    "Framework :: Django :: 4.2",
+    "Topic :: Database",
+]
+dependencies = [
+    "html-json-forms>=1.0.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/wq/django-natural-keys"
+Documentation = "https://wq.io/"
+Source = "https://github.com/wq/django-natural-keys"
+"Release Notes" = "https://github.com/wq/django-natural-keys/releases"
+Issues = "https://github.com/wq/django-natural-keys/issues"
+CI = "https://github.com/wq/django-natural-keys/actions/workflows/test.yml"
+
+[tool.setuptools_scm]

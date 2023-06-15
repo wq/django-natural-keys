@@ -104,8 +104,9 @@ class NaturalKeyTestCase(TestCase):
                 'extra1',
                 date='2019-07-26',
             )
+        msg = str(e.exception).replace("NaturalKeyModelManager.", "")
         self.assertEqual(
-            str(e.exception),
+            msg,
             "find() got an unexpected keyword argument 'date'"
         )
 
