@@ -15,18 +15,20 @@ class NaturalKeyTestCase(TestCase):
     def test_naturalkey_fields(self):
         # Model APIs
         self.assertEqual(
-            NaturalKeyParent.get_natural_key_fields(), ["code", "group"]
+            NaturalKeyParent.get_natural_key_fields(),
+            ("code", "group"),
         )
         self.assertEqual(
             NaturalKeyParent(code="code0", group="group0").natural_key(),
-            ["code0", "group0"],
+            ("code0", "group0"),
         )
         self.assertEqual(
             NaturalKeyChild.get_natural_key_fields(),
-            ["parent__code", "parent__group", "mode"],
+            ("parent__code", "parent__group", "mode"),
         )
         self.assertEqual(
-            ModelWithSingleUniqueField.get_natural_key_fields(), ["code"]
+            ModelWithSingleUniqueField.get_natural_key_fields(),
+            ("code",),
         )
 
     def test_naturalkey_create(self):
@@ -105,3 +107,22 @@ class NaturalKeyTestCase(TestCase):
             "2021-08-23",
         )
         self.assertEqual(str(obj), "constraint1 2021-08-23")
+
+    def test_null_foreign_key(self):
+        obj = NaturalKeyChild.objects.create(mode="mode0")
+        self.assertEqual(
+            obj.natural_key(),
+            (
+                None,
+                None,
+                "mode0",
+            ),
+        )
+        self.assertEqual(
+            NaturalKeyChild.objects.get_by_natural_key(
+                None,
+                None,
+                "mode0",
+            ),
+            obj,
+        )

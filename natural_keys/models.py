@@ -219,7 +219,7 @@ class NaturalKeyModel(models.Model):
                 natural_key.extend(
                     [name + "__" + nname for nname in nested_key]
                 )
-        return natural_key
+        return tuple(natural_key)
 
     def natural_key(self):
         """
@@ -227,12 +227,19 @@ class NaturalKeyModel(models.Model):
 
         (This is a generic implementation of the standard Django function)
         """
+        return tuple(
+            self.get_natural_key_value(field)
+            for field in self.get_natural_key_fields()
+        )
+
+    def get_natural_key_value(self, field):
         # Recursively extract properties from related objects if needed
-        vals = [
-            reduce(getattr, name.split("__"), self)
-            for name in self.get_natural_key_fields()
-        ]
-        return vals
+        obj = self
+        for part in field.split("__"):
+            obj = getattr(obj, part)
+            if obj is None:
+                return None
+        return obj
 
     natural_key_separator = "-"
 
