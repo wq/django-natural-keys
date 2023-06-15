@@ -1,4 +1,5 @@
 from .models import NaturalKeyModel, NaturalKeyModelManager, NaturalKeyQuerySet
+
 try:
     from .serializers import NaturalKeySerializer, NaturalKeyModelSerializer
 except ImportError:
@@ -7,6 +8,9 @@ except ImportError:
 
 
 __all__ = [
-    'NaturalKeyModel', 'NaturalKeyModelManager', 'NaturalKeySerializer',
-    'NaturalKeyModelSerializer', 'NaturalKeyQuerySet'
+    "NaturalKeyModel",
+    "NaturalKeyModelManager",
+    "NaturalKeySerializer",
+    "NaturalKeyModelSerializer",
+    "NaturalKeyQuerySet",
 ]

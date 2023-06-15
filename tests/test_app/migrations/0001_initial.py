@@ -8,73 +8,134 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='ModelWithConstraint',
+            name="ModelWithConstraint",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=10)),
-                ('date', models.DateField(max_length=10)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=10)),
+                ("date", models.DateField(max_length=10)),
             ],
         ),
         migrations.CreateModel(
-            name='ModelWithSingleUniqueField',
+            name="ModelWithSingleUniqueField",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=10, unique=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=10, unique=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='NaturalKeyParent',
+            name="NaturalKeyParent",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=10)),
-                ('group', models.CharField(max_length=10)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=10)),
+                ("group", models.CharField(max_length=10)),
             ],
             options={
-                'unique_together': {('code', 'group')},
+                "unique_together": {("code", "group")},
             },
         ),
         migrations.CreateModel(
-            name='NaturalKeyChild',
+            name="NaturalKeyChild",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('mode', models.CharField(max_length=10)),
-                ('parent', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='test_app.naturalkeyparent')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("mode", models.CharField(max_length=10)),
+                (
+                    "parent",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="test_app.naturalkeyparent",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ModelWithNaturalKey',
+            name="ModelWithNaturalKey",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('value', models.CharField(max_length=10)),
-                ('key', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='test_app.naturalkeychild')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("value", models.CharField(max_length=10)),
+                (
+                    "key",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="test_app.naturalkeychild",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ModelWithExtraField',
+            name="ModelWithExtraField",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('code', models.CharField(max_length=10)),
-                ('date', models.DateField(max_length=10)),
-                ('extra', models.TextField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("code", models.CharField(max_length=10)),
+                ("date", models.DateField(max_length=10)),
+                ("extra", models.TextField()),
             ],
             options={
-                'unique_together': {('code', 'date')},
+                "unique_together": {("code", "date")},
             },
         ),
         migrations.AddConstraint(
-            model_name='modelwithconstraint',
-            constraint=models.UniqueConstraint(fields=('code', 'date'), name='natural key'),
+            model_name="modelwithconstraint",
+            constraint=models.UniqueConstraint(
+                fields=("code", "date"), name="natural key"
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='naturalkeychild',
-            unique_together={('parent', 'mode')},
+            name="naturalkeychild",
+            unique_together={("parent", "mode")},
         ),
     ]

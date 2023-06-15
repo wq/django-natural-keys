@@ -7,7 +7,7 @@ class NaturalKeyParent(NaturalKeyModel):
     group = models.CharField(max_length=10)
 
     class Meta:
-        unique_together = ['code', 'group']
+        unique_together = ["code", "group"]
 
 
 class NaturalKeyChild(NaturalKeyModel):
@@ -15,7 +15,7 @@ class NaturalKeyChild(NaturalKeyModel):
     mode = models.CharField(max_length=10)
 
     class Meta:
-        unique_together = ['parent', 'mode']
+        unique_together = ["parent", "mode"]
 
 
 class ModelWithNaturalKey(models.Model):
@@ -33,7 +33,7 @@ class ModelWithExtraField(NaturalKeyModel):
     extra = models.TextField()
 
     class Meta:
-        unique_together = ['code', 'date']
+        unique_together = ["code", "date"]
 
 
 class ModelWithConstraint(NaturalKeyModel):
@@ -41,12 +41,12 @@ class ModelWithConstraint(NaturalKeyModel):
     date = models.DateField(max_length=10)
 
     def __str__(self):
-        return f'{self.code} {self.date}'
+        return f"{self.code} {self.date}"
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                name='natural key',
-                fields=['code', 'date'],
+                name="natural key",
+                fields=["code", "date"],
             ),
         ]

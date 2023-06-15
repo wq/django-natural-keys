@@ -5,17 +5,15 @@ except ImportError:
     pass
 else:
     from .models import (
-        NaturalKeyChild, ModelWithNaturalKey, ModelWithSingleUniqueField
+        NaturalKeyChild,
+        ModelWithNaturalKey,
+        ModelWithSingleUniqueField,
     )
-    from natural_keys import (
-        NaturalKeySerializer, NaturalKeyModelSerializer
-    )
+    from natural_keys import NaturalKeySerializer, NaturalKeyModelSerializer
 
     class NaturalKeyChildViewSet(viewsets.ModelViewSet):
         queryset = NaturalKeyChild.objects.all()
-        serializer_class = NaturalKeySerializer.for_model(
-            NaturalKeyChild
-        )
+        serializer_class = NaturalKeySerializer.for_model(NaturalKeyChild)
 
     class ModelWithNaturalKeyViewSet(viewsets.ModelViewSet):
         queryset = ModelWithNaturalKey.objects.all()
@@ -41,4 +39,4 @@ else:
     class NaturalKeyLookupViewSet(viewsets.ModelViewSet):
         queryset = NaturalKeyChild.objects.all()
         serializer_class = LookupSerializer
-        lookup_field = 'natural_key_slug'
+        lookup_field = "natural_key_slug"

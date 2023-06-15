@@ -8,7 +8,7 @@ from collections import OrderedDict
 
 class NaturalKeyValidator(serializers.UniqueTogetherValidator):
     def set_context(self, serializer):
-        if getattr(self, 'requires_context', None):
+        if getattr(self, "requires_context", None):
             # DRF 3.11+
             pass
         else:
@@ -30,11 +30,9 @@ class NaturalKeyValidator(serializers.UniqueTogetherValidator):
         attrs = attrs.copy()
         for field in attrs:
             if field in nested_fields:
-                assert(isinstance(attrs[field], dict))
+                assert isinstance(attrs[field], dict)
                 cls = nested_fields[field].Meta.model
-                result = cls._default_manager.filter(
-                    **attrs[field]
-                )
+                result = cls._default_manager.filter(**attrs[field])
                 if result.count() == 0:
                     # No existing nested object for these values
                     return queryset.none()
@@ -42,7 +40,7 @@ class NaturalKeyValidator(serializers.UniqueTogetherValidator):
                     # Existing nested object, use it to validate
                     attrs[field] = result[0].pk
 
-        if getattr(self, 'requires_context', None):
+        if getattr(self, "requires_context", None):
             # DRF 3.11+
             return super(NaturalKeyValidator, self).filter_queryset(
                 attrs, queryset, serializer
@@ -58,15 +56,16 @@ class NaturalKeySerializer(JSONFormModelSerializer):
     """
     Self-nesting Serializer for NaturalKeyModels
     """
+
     def build_standard_field(self, field_name, model_field):
         field_class, field_kwargs = super(
             NaturalKeySerializer, self
         ).build_standard_field(field_name, model_field)
 
-        if 'validators' in field_kwargs:
-            field_kwargs['validators'] = [
+        if "validators" in field_kwargs:
+            field_kwargs["validators"] = [
                 validator
-                for validator in field_kwargs.get('validators', [])
+                for validator in field_kwargs.get("validators", [])
                 if not isinstance(validator, UniqueValidator)
             ]
         return field_class, field_kwargs
@@ -85,7 +84,7 @@ class NaturalKeySerializer(JSONFormModelSerializer):
         natural_key = []
         for field in natural_key_fields:
             val = validated_data
-            for key in field.split('__'):
+            for key in field.split("__"):
                 val = val[key]
             natural_key.append(val)
         return model_class.objects.find(*natural_key)
@@ -102,8 +101,11 @@ class NaturalKeySerializer(JSONFormModelSerializer):
             raise NotImplementedError(
                 "NaturalKeySerializer for '%s' has unique_together = [%s], "
                 "but provided include_fields = [%s]"
-                % (model_class._meta.model_name, ', '.join(unique_together),
-                   ', '.join(include_fields))
+                % (
+                    model_class._meta.model_name,
+                    ", ".join(unique_together),
+                    ", ".join(include_fields),
+                )
             )
 
         class Serializer(cls):
@@ -119,6 +121,7 @@ class NaturalKeySerializer(JSONFormModelSerializer):
                     ]
                 else:
                     validators = []
+
         return Serializer
 
     @classmethod
@@ -133,6 +136,7 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
     """
     Serializer for models with one or more foreign keys to a NaturalKeyModel
     """
+
     def is_natural_key_model(self, related_model):
         return issubclass(related_model, NaturalKeyModel)
 
@@ -144,7 +148,7 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
             )
             field_kwargs = {}
             if relation_info.model_field.null:
-                field_kwargs['required'] = False
+                field_kwargs["required"] = False
             return field_class, field_kwargs
 
         return super(NaturalKeyModelSerializer, self).build_nested_field(
@@ -154,12 +158,10 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
     def build_relational_field(self, field_name, relation_info):
         field_class, field_kwargs = super(
             NaturalKeyModelSerializer, self
-        ).build_relational_field(
-            field_name, relation_info
-        )
+        ).build_relational_field(field_name, relation_info)
         if self.is_natural_key_model(relation_info.related_model):
-            field_kwargs.pop('queryset')
-            field_kwargs['read_only'] = True
+            field_kwargs.pop("queryset")
+            field_kwargs["read_only"] = True
         return field_class, field_kwargs
 
     def get_fields(self):
@@ -182,17 +184,11 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
         return fields
 
     def create(self, validated_data):
-        self.convert_natural_keys(
-            validated_data
-        )
-        return super(NaturalKeyModelSerializer, self).create(
-            validated_data
-        )
+        self.convert_natural_keys(validated_data)
+        return super(NaturalKeyModelSerializer, self).create(validated_data)
 
     def update(self, instance, validated_data):
-        self.convert_natural_keys(
-            validated_data
-        )
+        self.convert_natural_keys(validated_data)
         return super(NaturalKeyModelSerializer, self).update(
             instance, validated_data
         )
@@ -215,6 +211,7 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
                 model = model_class
                 if include_fields:
                     fields = include_fields
+
         return Serializer
 
     class Meta:

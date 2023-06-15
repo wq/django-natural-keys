@@ -4,16 +4,14 @@ from functools import reduce
 
 class NaturalKeyQuerySet(models.QuerySet):
     def filter(self, *args, **kwargs):
-        natural_key_slug = kwargs.pop('natural_key_slug', None)
+        natural_key_slug = kwargs.pop("natural_key_slug", None)
         if natural_key_slug and type(natural_key_slug) is str:
-            slugs = natural_key_slug.split(
-                self.model.natural_key_separator
-            )
+            slugs = natural_key_slug.split(self.model.natural_key_separator)
             fields = self.model.get_natural_key_fields()
             if len(slugs) > len(fields):
-                slugs[len(fields) - 1:] = [
+                slugs[len(fields) - 1 :] = [
                     self.model.natural_key_separator.join(
-                        slugs[len(fields) - 1:]
+                        slugs[len(fields) - 1 :]
                     )
                 ]
             elif len(slugs) < len(fields):
@@ -25,8 +23,9 @@ class NaturalKeyQuerySet(models.QuerySet):
     def natural_key_kwargs(self, *args):
         natural_key = self.model.get_natural_key_fields()
         if len(args) != len(natural_key):
-            raise TypeError("Wrong number of values, expected %s"
-                            % len(natural_key))
+            raise TypeError(
+                "Wrong number of values, expected %s" % len(natural_key)
+            )
         return dict(zip(natural_key, args))
 
 
@@ -34,6 +33,7 @@ class NaturalKeyModelManager(models.Manager):
     """
     Manager for use with subclasses of NaturalKeyModel.
     """
+
     def get_queryset(self):
         return NaturalKeyQuerySet(self.model, using=self._db)
 
@@ -85,9 +85,10 @@ class NaturalKeyModelManager(models.Manager):
             nested_key = extract_nested_key(kwargs, rel_to, name)
             # Automatically create any related objects as needed
             if nested_key:
-                kwargs[name], is_new = (
-                    rel_to.objects.get_or_create_by_natural_key(*nested_key)
-                )
+                (
+                    kwargs[name],
+                    is_new,
+                ) = rel_to.objects.get_or_create_by_natural_key(*nested_key)
             else:
                 kwargs[name] = None
         if defaults:
@@ -102,9 +103,18 @@ class NaturalKeyModelManager(models.Manager):
         get_or_create + get_by_natural_key
         """
         try:
-            return self.get_by_natural_key(*args), False
+            return (
+                self.get_by_natural_key(*args),
+                False,
+            )
         except self.model.DoesNotExist:
-            return self.create_by_natural_key(*args, defaults=defaults), True
+            return (
+                self.create_by_natural_key(
+                    *args,
+                    defaults=defaults,
+                ),
+                True,
+            )
 
     # Shortcut for common use case
     def find(self, *args, defaults=None):
@@ -114,7 +124,7 @@ class NaturalKeyModelManager(models.Manager):
         """
         obj, is_new = self.get_or_create_by_natural_key(
             *args,
-            defaults=defaults
+            defaults=defaults,
         )
         return obj
 
@@ -161,9 +171,9 @@ class NaturalKeyModel(models.Model):
         for name in fields:
             field = cls._meta.get_field(name)
             rel_to = None
-            if hasattr(field, 'rel'):
+            if hasattr(field, "rel"):
                 rel_to = field.rel.to if field.rel else None
-            elif hasattr(field, 'remote_field'):
+            elif hasattr(field, "remote_field"):
                 if field.remote_field:
                     rel_to = field.remote_field.model
                 else:
@@ -173,7 +183,7 @@ class NaturalKeyModel(models.Model):
 
     @classmethod
     def get_natural_key_def(cls):
-        if hasattr(cls, '_natural_key'):
+        if hasattr(cls, "_natural_key"):
             return cls._natural_key
 
         for constraint in cls._meta.constraints:
@@ -184,13 +194,13 @@ class NaturalKeyModel(models.Model):
             return cls._meta.unique_together[0]
 
         unique = [
-            f for f in cls._meta.fields
-            if f.unique and f.__class__.__name__ not in [
-                'AutoField', 'BigAutoField'
-            ]
+            f
+            for f in cls._meta.fields
+            if f.unique
+            and f.__class__.__name__ not in ["AutoField", "BigAutoField"]
         ]
         if unique:
-            return (unique[0].name, )
+            return (unique[0].name,)
 
         raise Exception("Add a UniqueConstraint to use natural-keys")
 
@@ -206,10 +216,9 @@ class NaturalKeyModel(models.Model):
                 natural_key.append(name)
             else:
                 nested_key = rel_to.get_natural_key_fields()
-                natural_key.extend([
-                    name + '__' + nname
-                    for nname in nested_key
-                ])
+                natural_key.extend(
+                    [name + "__" + nname for nname in nested_key]
+                )
         return natural_key
 
     def natural_key(self):
@@ -219,11 +228,13 @@ class NaturalKeyModel(models.Model):
         (This is a generic implementation of the standard Django function)
         """
         # Recursively extract properties from related objects if needed
-        vals = [reduce(getattr, name.split('__'), self)
-                for name in self.get_natural_key_fields()]
+        vals = [
+            reduce(getattr, name.split("__"), self)
+            for name in self.get_natural_key_fields()
+        ]
         return vals
 
-    natural_key_separator = '-'
+    natural_key_separator = "-"
 
     @property
     def natural_key_slug(self):
@@ -235,21 +246,21 @@ class NaturalKeyModel(models.Model):
         abstract = True
 
 
-def extract_nested_key(key, cls, prefix=''):
+def extract_nested_key(key, cls, prefix=""):
     nested_key = cls.get_natural_key_fields()
     local_fields = {field.name: field for field in cls._meta.local_fields}
     values = []
     has_val = False
     if prefix:
-        prefix += '__'
+        prefix += "__"
     for nname in nested_key:
         val = key.pop(prefix + nname, None)
         if val is None and nname in local_fields:
-            if type(local_fields[nname]).__name__ == 'DateTimeField':
-                date = key.pop(nname + '_date', None)
-                time = key.pop(nname + '_time', None)
+            if type(local_fields[nname]).__name__ == "DateTimeField":
+                date = key.pop(nname + "_date", None)
+                time = key.pop(nname + "_time", None)
                 if date and time:
-                    val = '%s %s' % (date, time)
+                    val = "%s %s" % (date, time)
 
         if val is not None:
             has_val = True

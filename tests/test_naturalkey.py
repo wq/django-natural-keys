@@ -1,7 +1,10 @@
 from django.test import TestCase
 from tests.test_app.models import (
-    NaturalKeyParent, NaturalKeyChild,
-    ModelWithSingleUniqueField, ModelWithExtraField, ModelWithConstraint
+    NaturalKeyParent,
+    NaturalKeyChild,
+    ModelWithSingleUniqueField,
+    ModelWithExtraField,
+    ModelWithConstraint,
 )
 from django.db.utils import IntegrityError
 
@@ -12,27 +15,23 @@ class NaturalKeyTestCase(TestCase):
     def test_naturalkey_fields(self):
         # Model APIs
         self.assertEqual(
-            NaturalKeyParent.get_natural_key_fields(),
-            ['code', 'group']
+            NaturalKeyParent.get_natural_key_fields(), ["code", "group"]
         )
         self.assertEqual(
-            NaturalKeyParent(code='code0', group='group0').natural_key(),
-            ['code0', 'group0'],
+            NaturalKeyParent(code="code0", group="group0").natural_key(),
+            ["code0", "group0"],
         )
         self.assertEqual(
             NaturalKeyChild.get_natural_key_fields(),
-            ['parent__code', 'parent__group', 'mode']
+            ["parent__code", "parent__group", "mode"],
         )
         self.assertEqual(
-            ModelWithSingleUniqueField.get_natural_key_fields(),
-            ['code']
+            ModelWithSingleUniqueField.get_natural_key_fields(), ["code"]
         )
 
     def test_naturalkey_create(self):
         # Manager create
-        p1 = NaturalKeyParent.objects.create_by_natural_key(
-            "code1", "group1"
-        )
+        p1 = NaturalKeyParent.objects.create_by_natural_key("code1", "group1")
         self.assertEqual(p1.code, "code1")
         self.assertEqual(p1.group, "group1")
 
@@ -47,9 +46,7 @@ class NaturalKeyTestCase(TestCase):
         p3 = NaturalKeyParent.objects.find("code1", "group1")
         self.assertEqual(p1.pk, p3.pk)
 
-        p4 = ModelWithSingleUniqueField.objects.create_by_natural_key(
-            "code4"
-        )
+        p4 = ModelWithSingleUniqueField.objects.create_by_natural_key("code4")
         self.assertEqual(p4.code, "code4")
 
     def test_naturalkey_nested_create(self):
@@ -70,52 +67,41 @@ class NaturalKeyTestCase(TestCase):
 
     def test_naturalkey_duplicate(self):
         # Manager create, with duplicate
-        NaturalKeyParent.objects.create_by_natural_key(
-            "code1", "group1"
-        )
+        NaturalKeyParent.objects.create_by_natural_key("code1", "group1")
         # create with same key should fail
         with self.assertRaises(IntegrityError):
-            NaturalKeyParent.objects.create_by_natural_key(
-                "code1", "group1"
-            )
+            NaturalKeyParent.objects.create_by_natural_key("code1", "group1")
 
     def test_filter_with_Q(self):
         from django.db.models import Q
+
         query = Q(code="bizarre")
         self.assertEqual(
-            ModelWithSingleUniqueField.objects.filter(query).count(),
-            0
+            ModelWithSingleUniqueField.objects.filter(query).count(), 0
         )
 
     def test_find_with_defaults(self):
         obj = ModelWithExtraField.objects.find(
-            'extra1',
-            '2019-07-26',
-            defaults={'extra': 'Test 123'},
+            "extra1",
+            "2019-07-26",
+            defaults={"extra": "Test 123"},
         )
-        self.assertEqual(
-            obj.extra,
-            'Test 123'
-        )
+        self.assertEqual(obj.extra, "Test 123")
 
     def test_find_with_kwargs(self):
         with self.assertRaises(TypeError) as e:
             ModelWithExtraField.objects.find(
-                'extra1',
-                date='2019-07-26',
+                "extra1",
+                date="2019-07-26",
             )
         msg = str(e.exception).replace("NaturalKeyModelManager.", "")
         self.assertEqual(
-            msg,
-            "find() got an unexpected keyword argument 'date'"
+            msg, "find() got an unexpected keyword argument 'date'"
         )
 
     def test_find_with_constraint(self):
         obj = ModelWithConstraint.objects.find(
-            'constraint1',
-            '2021-08-23',
+            "constraint1",
+            "2021-08-23",
         )
-        self.assertEqual(
-            str(obj),
-            'constraint1 2021-08-23'
-        )
+        self.assertEqual(str(obj), "constraint1 2021-08-23")
