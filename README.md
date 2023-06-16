@@ -244,10 +244,10 @@ rest.router.register_model(
 
 Note that the `natural_key_slug` may not behave as expected if any of the component values contain the delimiter character (`-` by default).  To mitigate this, you can set `natural_key_separator` on the model class to another character.
 
-[natural keys]: https://docs.djangoproject.com/en/3.2/topics/serialization/#natural-keys
-[UniqueConstraint]: https://docs.djangoproject.com/en/3.2/ref/models/constraints/#uniqueconstraint
-[unique_together]: https://docs.djangoproject.com/en/3.2/ref/models/options/#unique-together
-[unique]: https://docs.djangoproject.com/en/3.2/ref/models/fields/#unique
+[natural keys]: https://docs.djangoproject.com/en/4.2/topics/serialization/#natural-keys
+[UniqueConstraint]: https://docs.djangoproject.com/en/4.2/ref/models/constraints/#uniqueconstraint
+[unique_together]: https://docs.djangoproject.com/en/4.2/ref/models/options/#unique-together
+[unique]: https://docs.djangoproject.com/en/4.2/ref/models/fields/#unique
 
 [wq.db]: https://wq.io/wq.db/
 [Django REST Framework]: http://www.django-rest-framework.org/
