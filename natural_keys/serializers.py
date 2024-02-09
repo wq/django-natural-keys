@@ -173,7 +173,7 @@ class NaturalKeyModelSerializer(JSONFormModelSerializer):
         info = model_meta.get_field_info(self.Meta.model)
         fields = OrderedDict()
         for field, relation_info in info.relations.items():
-            if relation_info.reverse:
+            if relation_info.reverse or relation_info.to_many:
                 continue
             if not self.is_natural_key_model(relation_info.related_model):
                 continue
