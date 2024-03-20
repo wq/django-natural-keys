@@ -16,6 +16,8 @@ else:
     router.register(
         r"modelwithsingleuniquefield", ModelWithSingleUniqueFieldViewSet
     )
-    router.register(r"naturalkeylookup", NaturalKeyLookupViewSet)
+    router.register(
+        r"naturalkeylookup", NaturalKeyLookupViewSet, basename="lookup"
+    )
 
     urlpatterns = router.urls
